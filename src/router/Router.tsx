@@ -40,6 +40,40 @@ export const routes: RouteI[] = [
     name: 'home',
     Component: Home,
     breadcrumbName: '',
+    routes: [
+      {
+        path: '/note',
+        name: 'note',
+        Component: Home,
+        breadcrumbName: '所有記事',
+        routes: [
+          {
+            path: '/note/TheF2E/:note',
+            name: 'TheF2E',
+            Component: Home,
+            breadcrumbName: 'The F2E',
+          },
+        ],
+      },
+      {
+        path: '/star',
+        name: 'star',
+        Component: Home,
+        breadcrumbName: '已加星號',
+      },
+      {
+        path: '/share',
+        name: 'share',
+        Component: Home,
+        breadcrumbName: '與我共享',
+      },
+      {
+        path: '/trashCan',
+        name: 'trashCan',
+        Component: Home,
+        breadcrumbName: '垃圾桶',
+      },
+    ],
   },
 ];
 
@@ -48,7 +82,6 @@ const useStyles = makeStyles(() => createStyles({
   root: {
     fontFamily: 'system-ui, -apple-system, "Roboto", "Helvetica", "Arial", sans-serif',
     minHeight: '100vh',
-    color: '#373737',
   },
 }));
 
