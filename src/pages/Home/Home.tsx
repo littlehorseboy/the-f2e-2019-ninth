@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import PersonIcon from '@material-ui/icons/Person';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import WbSunnyOutlinedIcon from '@material-ui/icons/WbSunnyOutlined';
+import ListIcon from '@material-ui/icons/List';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import { RouteComponentPropsI, RouteWithSubRoutes } from '../../router/Router';
+import CustomButton from '../../components/UI/CustomButton/CustomButton';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const useStyles = makeStyles((theme) => createStyles({
@@ -33,26 +45,38 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
 
   const { routes } = props;
 
-  const [myCloudDriveOpen, setMyCloudDriveOpen] = useState(true);
+  const [noteOpen, setNoteOpen] = useState(true);
 
   const [folderOpen, setFolderOpen] = useState(true);
+
+  const [viewMode, setViewMode] = useState('list');
+
+  const handleChangeViewMode = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>, mode: string | null,
+  ): void => {
+    if (mode) {
+      setViewMode(mode);
+    }
+  };
 
   return (
     <div className={classes.root}>
       <div className={classes.sidebar}>
-        <Button>新增筆記</Button>
+        <Grid container justify="center">
+          <CustomButton>新增筆記</CustomButton>
+        </Grid>
 
         <div>
           <List component="nav">
             <ListItem
               button
               className={classes.listItem}
-              onClick={(): void => setMyCloudDriveOpen(!myCloudDriveOpen)}
+              onClick={(): void => setNoteOpen(!noteOpen)}
             >
               所有記事
-              {myCloudDriveOpen ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+              {noteOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItem>
-            <Collapse in={myCloudDriveOpen} timeout="auto" unmountOnExit>
+            <Collapse in={noteOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem
                   button
@@ -60,7 +84,7 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
                   onClick={(): void => setFolderOpen(!folderOpen)}
                 >
                   The F2E
-                  {myCloudDriveOpen ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                  {folderOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ListItem>
                 <Collapse in={folderOpen} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
@@ -96,7 +120,7 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
               to="/star"
             >
               已加星號
-              {myCloudDriveOpen ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+              {noteOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItem>
 
             <ListItem
@@ -105,7 +129,7 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
               to="/star"
             >
               與我共享
-              {myCloudDriveOpen ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+              {noteOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItem>
 
             <ListItem
@@ -118,16 +142,49 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
           </List>
         </div>
 
-        <Button>所有記事</Button>
+        <Avatar>
+          <PersonIcon />
+        </Avatar>
+        HORSE
+        <IconButton color="inherit">
+          <SettingsOutlinedIcon />
+        </IconButton>
       </div>
 
       <div>
+        <div>
+          <div>
+            <ArrowBackIcon />
+            <ArrowForwardIcon />
+          </div>
+          <div>
+            <WbSunnyOutlinedIcon />
+            <ToggleButtonGroup
+              // className={classes.toggleButtonGroup}
+              value={viewMode}
+              size="small"
+              exclusive
+              onChange={handleChangeViewMode}
+            >
+              <ToggleButton value="list">
+                <ListIcon />
+              </ToggleButton>
+              <ToggleButton value="grid">
+                <DashboardIcon />
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
+        </div>
 
-        {routes && routes.map((route): JSX.Element => (
-          <React.Fragment key={route.path}>
-            <RouteWithSubRoutes route={route} />
-          </React.Fragment>
-        ))}
+        <div>
+          {/* 麵包屑 */}
+
+          {routes && routes.map((route): JSX.Element => (
+            <React.Fragment key={route.path}>
+              <RouteWithSubRoutes route={route} />
+            </React.Fragment>
+          ))}
+        </div>
       </div>
     </div>
   );
