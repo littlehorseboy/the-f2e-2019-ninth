@@ -1,0 +1,7 @@
+!.eslintrc.js
+*.svg
+*.png
+*.json
+*.html
+*.md
+/dist
