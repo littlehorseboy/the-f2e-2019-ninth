@@ -22,6 +22,9 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import { RouteComponentPropsI, RouteWithSubRoutes } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const separateDarkImg = require('../../assets/images/separate_dark.png');
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const useStyles = makeStyles((theme) => createStyles({
   root: {
@@ -55,7 +58,7 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   userContainer: {
     paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(4),
+    paddingRight: theme.spacing(5),
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -64,6 +67,46 @@ const useStyles = makeStyles((theme) => createStyles({
       alignItems: 'center',
       '& > span': {
         paddingLeft: theme.spacing(2),
+      },
+    },
+  },
+  separateImgDiv: {
+    backgroundImage: `url(${separateDarkImg})`,
+    position: 'absolute',
+    top: 0,
+    left: 'calc(300px - 42.5px)',
+    width: 85,
+    height: '100%',
+  },
+  rightContainer: {
+    flexGrow: 1,
+    '& > div:first-child': {
+      borderBottom: '2px solid currentColor',
+    },
+  },
+  headerArrowContainer: {
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(2),
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  headerToolbarContainer: {
+    paddingLeft: theme.spacing(7),
+    paddingRight: theme.spacing(20),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  toggleButtonGroup: {
+    backgroundColor: 'transparent',
+    '& > button.MuiToggleButton-root': {
+      color: 'currentColor',
+      borderColor: 'currentColor',
+      borderRadius: 0,
+      '&.Mui-selected': {
+        backgroundColor: '#616F99',
       },
     },
   },
@@ -187,18 +230,27 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
             </IconButton>
           </div>
         </div>
+
+        <div className={classes.separateImgDiv} />
+        {/* <img src={separateDarkImg} alt="" /> */}
       </div>
 
-      <div>
+      <div className={classes.rightContainer}>
         <div>
-          <div>
-            <ArrowBackIcon />
-            <ArrowForwardIcon />
+          <div className={classes.headerArrowContainer}>
+            <IconButton color="inherit">
+              <ArrowBackIcon />
+            </IconButton>
+            <IconButton color="inherit">
+              <ArrowForwardIcon />
+            </IconButton>
           </div>
-          <div>
-            <WbSunnyOutlinedIcon />
+          <div className={classes.headerToolbarContainer}>
+            <IconButton color="inherit">
+              <WbSunnyOutlinedIcon />
+            </IconButton>
             <ToggleButtonGroup
-              // className={classes.toggleButtonGroup}
+              className={classes.toggleButtonGroup}
               value={viewMode}
               size="small"
               exclusive
