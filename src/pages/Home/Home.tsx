@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
@@ -32,10 +33,38 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   sidebar: {
     width: 300,
+    paddingBottom: 30,
+  },
+  newNoteButtonContainer: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  listContainer: {
+    height: 'calc(100% - 48px - 104px)',
   },
   listItem: {
+    '&.title': {
+      fontSize: '1.1rem',
+      '&:not(:first-child)': {
+        marginTop: theme.spacing(2),
+      },
+    },
     '& + .MuiCollapse-container': {
-      paddingLeft: theme.spacing(2),
+      paddingLeft: theme.spacing(3),
+    },
+  },
+  userContainer: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(4),
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& > div:first-child': {
+      display: 'flex',
+      alignItems: 'center',
+      '& > span': {
+        paddingLeft: theme.spacing(2),
+      },
     },
   },
 }));
@@ -62,15 +91,15 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
   return (
     <div className={classes.root}>
       <div className={classes.sidebar}>
-        <Grid container justify="center">
+        <Grid container justify="center" className={classes.newNoteButtonContainer}>
           <CustomButton>新增筆記</CustomButton>
         </Grid>
 
-        <div>
+        <div className={classes.listContainer}>
           <List component="nav">
             <ListItem
               button
-              className={classes.listItem}
+              className={classNames(classes.listItem, 'title')}
               onClick={(): void => setNoteOpen(!noteOpen)}
             >
               所有記事
@@ -116,6 +145,7 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
 
             <ListItem
               button
+              className={classNames(classes.listItem, 'title')}
               component={Link}
               to="/star"
             >
@@ -125,6 +155,7 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
 
             <ListItem
               button
+              className={classNames(classes.listItem, 'title')}
               component={Link}
               to="/star"
             >
@@ -134,6 +165,7 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
 
             <ListItem
               button
+              className={classNames(classes.listItem, 'title')}
               component={Link}
               to="/star"
             >
@@ -142,13 +174,19 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
           </List>
         </div>
 
-        <Avatar>
-          <PersonIcon />
-        </Avatar>
-        HORSE
-        <IconButton color="inherit">
-          <SettingsOutlinedIcon />
-        </IconButton>
+        <div className={classes.userContainer}>
+          <div>
+            <Avatar>
+              <PersonIcon />
+            </Avatar>
+            <span>HORSE</span>
+          </div>
+          <div>
+            <IconButton color="inherit">
+              <SettingsOutlinedIcon />
+            </IconButton>
+          </div>
+        </div>
       </div>
 
       <div>
