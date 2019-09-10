@@ -142,19 +142,33 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
             )}
           </Breadcrumbs>
 
-          <Grid container spacing={3} className={classes.gridContainer}>
-            <Grid item xs={6}>
-              <Paper>
-                <Typography>123</Typography>
-              </Paper>
+          {folder && !note && (
+            <Grid container spacing={3} className={classes.gridContainer}>
+              <Grid item xs={6}>
+                <Paper>
+                  <Typography>123</Typography>
+                  <CustomButton>more</CustomButton>
+                </Paper>
+              </Grid>
+              <Grid item xs={6}>
+                <Paper>
+                  <Typography>123</Typography>
+                  <CustomButton>more</CustomButton>
+                </Paper>
+              </Grid>
+              <Grid item xs={6}>
+                <Paper>
+                  <Typography>123</Typography>
+                  <CustomButton>more</CustomButton>
+                </Paper>
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <Paper>123</Paper>
-            </Grid>
-            <Grid item xs={6}>
-              <Paper>123</Paper>
-            </Grid>
-          </Grid>
+          )}
+
+          {note && (
+            <Typography>Note</Typography>
+            // Draft.js
+          )}
         </Container>
       </div>
     </div>
