@@ -3,6 +3,7 @@ import { HashRouter, Route, RouteComponentProps } from 'react-router-dom';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import IsLoading from '../components/IsLoading/IsLoading';
 import Home from '../pages/Home/Home';
+import Note from '../pages/Note/Note';
 
 interface RouteWithSubRoutesPropsI {
   route: RouteI;
@@ -44,16 +45,8 @@ export const routes: RouteI[] = [
       {
         path: '/note',
         name: 'note',
-        Component: Home,
+        Component: Note,
         breadcrumbName: '所有記事',
-        routes: [
-          {
-            path: '/note/TheF2E/:note',
-            name: 'TheF2E',
-            Component: Home,
-            breadcrumbName: 'The F2E',
-          },
-        ],
       },
       {
         path: '/star',

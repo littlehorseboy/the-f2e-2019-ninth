@@ -3,7 +3,6 @@ import uuidv4 from 'uuid/v4';
 import { Link as RouterLink, withRouter, RouteComponentProps } from 'react-router-dom';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
-import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import { routes, RouteI } from '../Router';
@@ -14,6 +13,7 @@ const useStyles = makeStyles((theme) => createStyles({
     marginTop: theme.spacing(0.5),
   },
   breadcrumbs: {
+    color: '#FFFFFF',
     '& > ol > li > *': {
       fontSize: '0.9rem',
     },
@@ -47,35 +47,34 @@ function RouterBreadcrumbs(props: RouteComponentProps): JSX.Element {
   }
   flatRoutesFunc(routes);
 
-  const pathNameBreadcrumbs = splitMatchPathName
+  let pathNameBreadcrumbs = splitMatchPathName
     .map((pathName): RouteI | undefined => flatRoutes
       .find((route): boolean => route.path === pathName));
 
+  pathNameBreadcrumbs = pathNameBreadcrumbs.filter((route): boolean => route !== undefined && route.breadcrumbName !== '');
+
   return (
     <div className={classes.root}>
-      <Container maxWidth={false}>
-        <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
-          {pathNameBreadcrumbs
-            .filter((route): boolean => route !== undefined)
-            .map((route, index): JSX.Element => (
-              <React.Fragment key={uuidv4()}>
-                {route && (
-                  pathNameBreadcrumbs.length === index + 1
-                    ? (
-                      <Typography color="textPrimary">
-                        {route.breadcrumbName}
-                      </Typography>
-                    )
-                    : (
-                      <Link color="inherit" component={RouterLink} to={route.path}>
-                        {route.breadcrumbName}
-                      </Link>
-                    )
-                )}
-              </React.Fragment>
-            ))}
-        </Breadcrumbs>
-      </Container>
+      <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
+        {pathNameBreadcrumbs
+          .map((route, index): JSX.Element => (
+            <React.Fragment key={uuidv4()}>
+              {route && (
+                pathNameBreadcrumbs.length === index + 1
+                  ? (
+                    <Typography>
+                      {route.breadcrumbName}
+                    </Typography>
+                  )
+                  : (
+                    <Link color="inherit" component={RouterLink} to={route.path}>
+                      {route.breadcrumbName}
+                    </Link>
+                  )
+              )}
+            </React.Fragment>
+          ))}
+      </Breadcrumbs>
     </div>
   );
 }

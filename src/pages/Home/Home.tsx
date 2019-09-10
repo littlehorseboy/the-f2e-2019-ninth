@@ -8,17 +8,10 @@ import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import WbSunnyOutlinedIcon from '@material-ui/icons/WbSunnyOutlined';
-import ListIcon from '@material-ui/icons/List';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import { RouteComponentPropsI, RouteWithSubRoutes } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
 
@@ -58,7 +51,7 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   userContainer: {
     paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(5),
+    paddingRight: theme.spacing(6),
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -78,38 +71,6 @@ const useStyles = makeStyles((theme) => createStyles({
     width: 85,
     height: '100%',
   },
-  rightContainer: {
-    flexGrow: 1,
-    '& > div:first-child': {
-      borderBottom: '2px solid currentColor',
-    },
-  },
-  headerArrowContainer: {
-    paddingLeft: theme.spacing(7),
-    paddingRight: theme.spacing(2),
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  headerToolbarContainer: {
-    paddingLeft: theme.spacing(7),
-    paddingRight: theme.spacing(20),
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  toggleButtonGroup: {
-    backgroundColor: 'transparent',
-    '& > button.MuiToggleButton-root': {
-      color: 'currentColor',
-      borderColor: 'currentColor',
-      borderRadius: 0,
-      '&.Mui-selected': {
-        backgroundColor: '#616F99',
-      },
-    },
-  },
 }));
 
 export default function Home(props: RouteComponentPropsI): JSX.Element {
@@ -120,16 +81,6 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
   const [noteOpen, setNoteOpen] = useState(true);
 
   const [folderOpen, setFolderOpen] = useState(true);
-
-  const [viewMode, setViewMode] = useState('list');
-
-  const handleChangeViewMode = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>, mode: string | null,
-  ): void => {
-    if (mode) {
-      setViewMode(mode);
-    }
-  };
 
   return (
     <div className={classes.root}>
@@ -143,41 +94,63 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
             <ListItem
               button
               className={classNames(classes.listItem, 'title')}
-              onClick={(): void => setNoteOpen(!noteOpen)}
+              component={Link}
+              to="/note"
             >
               所有記事
-              {noteOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              <IconButton
+                color="inherit"
+                size="small"
+                onClick={(e): void => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setNoteOpen(!noteOpen);
+                }}
+              >
+                {noteOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
             </ListItem>
             <Collapse in={noteOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem
                   button
                   className={classes.listItem}
-                  onClick={(): void => setFolderOpen(!folderOpen)}
+                  component={Link}
+                  to="/note?folder=The F2E"
                 >
                   The F2E
-                  {folderOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  <IconButton
+                    color="inherit"
+                    size="small"
+                    onClick={(e): void => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setFolderOpen(!folderOpen);
+                    }}
+                  >
+                    {folderOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  </IconButton>
                 </ListItem>
                 <Collapse in={folderOpen} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     <ListItem
                       button
                       component={Link}
-                      to="/folder/graphicDesign"
+                      to="/note?folder=The F2E&note=Note"
                     >
                       Note
                     </ListItem>
                     <ListItem
                       button
                       component={Link}
-                      to="/folder/uidesign"
+                      to="/note?folder=The F2E&note=Cloud drive"
                     >
                       Cloud drive
                     </ListItem>
                     <ListItem
                       button
                       component={Link}
-                      to="/folder/illustration"
+                      to="/note?folder=The F2E&note=Chatting room"
                     >
                       Chatting room
                     </ListItem>
@@ -193,24 +166,22 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
               to="/star"
             >
               已加星號
-              {noteOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItem>
 
             <ListItem
               button
               className={classNames(classes.listItem, 'title')}
               component={Link}
-              to="/star"
+              to="/share"
             >
               與我共享
-              {noteOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItem>
 
             <ListItem
               button
               className={classNames(classes.listItem, 'title')}
               component={Link}
-              to="/star"
+              to="/trashCan"
             >
               垃圾桶
             </ListItem>
@@ -235,47 +206,11 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
         {/* <img src={separateDarkImg} alt="" /> */}
       </div>
 
-      <div className={classes.rightContainer}>
-        <div>
-          <div className={classes.headerArrowContainer}>
-            <IconButton color="inherit">
-              <ArrowBackIcon />
-            </IconButton>
-            <IconButton color="inherit">
-              <ArrowForwardIcon />
-            </IconButton>
-          </div>
-          <div className={classes.headerToolbarContainer}>
-            <IconButton color="inherit">
-              <WbSunnyOutlinedIcon />
-            </IconButton>
-            <ToggleButtonGroup
-              className={classes.toggleButtonGroup}
-              value={viewMode}
-              size="small"
-              exclusive
-              onChange={handleChangeViewMode}
-            >
-              <ToggleButton value="list">
-                <ListIcon />
-              </ToggleButton>
-              <ToggleButton value="grid">
-                <DashboardIcon />
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </div>
-        </div>
-
-        <div>
-          {/* 麵包屑 */}
-
-          {routes && routes.map((route): JSX.Element => (
-            <React.Fragment key={route.path}>
-              <RouteWithSubRoutes route={route} />
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
+      {routes && routes.map((route): JSX.Element => (
+        <React.Fragment key={route.path}>
+          <RouteWithSubRoutes route={route} />
+        </React.Fragment>
+      ))}
     </div>
   );
 }
