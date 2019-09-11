@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import {
+  Editor, EditorState, RichUtils, DraftHandleValue,
+} from 'draft-js';
 import classNames from 'classnames';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
@@ -8,6 +11,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -16,6 +20,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import WbSunnyOutlinedIcon from '@material-ui/icons/WbSunnyOutlined';
 import ListIcon from '@material-ui/icons/List';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { RouteComponentPropsI } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
 
@@ -88,6 +93,28 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
     }
   };
 
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  const handleKeyCommand = (
+    command: string,
+    internalEditorState: EditorState,
+  ): DraftHandleValue => {
+    const newState = RichUtils.handleKeyCommand(internalEditorState, command);
+    if (newState) {
+      setEditorState(newState);
+      return 'handled';
+    }
+    return 'not-handled';
+  };
+
+  const handleBoldClick = (): void => {
+    setEditorState(RichUtils.toggleInlineStyle(editorState, 'BOLD'));
+  };
+
+  const handleSubmit = (): void => {
+    alert(editorState.getCurrentContent());
+  };
+
   return (
     <div className={classes.rightContainer}>
       <div>
@@ -100,6 +127,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
           </IconButton>
         </div>
         <div className={classes.headerToolbarContainer}>
+          <Button onClick={handleBoldClick}>Bold</Button>
           <IconButton color="inherit">
             <WbSunnyOutlinedIcon />
           </IconButton>
@@ -166,8 +194,23 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
           )}
 
           {note && (
-            <Typography>Note</Typography>
-            // Draft.js
+            <>
+              <Typography>
+                Note
+                <IconButton color="inherit">
+                  <StarBorderIcon />
+                </IconButton>
+              </Typography>
+
+              <Editor
+                editorState={editorState}
+                handleKeyCommand={handleKeyCommand}
+                onChange={setEditorState}
+                placeholder="請在此輸入文章內容"
+              />
+
+              <Button onClick={handleSubmit}>get</Button>
+            </>
           )}
         </Container>
       </div>
