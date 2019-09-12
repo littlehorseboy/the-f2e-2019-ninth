@@ -127,7 +127,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
           </IconButton>
         </div>
         <div className={classes.headerToolbarContainer}>
-          <Button onClick={handleBoldClick}>Bold</Button>
+          <Button color="secondary" onClick={handleBoldClick}>Bold</Button>
           <IconButton color="inherit">
             <WbSunnyOutlinedIcon />
           </IconButton>
