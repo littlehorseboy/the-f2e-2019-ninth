@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 import {
-  Editor, EditorState, RichUtils, DraftHandleValue,
+  Editor, EditorState, RichUtils, DraftHandleValue, convertToRaw, convertFromRaw,
 } from 'draft-js';
 import classNames from 'classnames';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
@@ -23,6 +24,9 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { RouteComponentPropsI } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
+import { storeTypes } from '../../reducers/configureStore';
+import { NoteI } from '../../reducers/notes/notes';
+import { saveContentState } from '../../actions/notes/notes';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const useStyles = makeStyles((theme) => createStyles({
@@ -77,12 +81,6 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
 
   const { routeComponentProps } = props;
 
-  const searchParams = new URLSearchParams(routeComponentProps.location.search);
-
-  const folder = searchParams.get('folder');
-
-  const note = searchParams.get('note');
-
   const [viewMode, setViewMode] = useState('list');
 
   const handleChangeViewMode = (
@@ -93,7 +91,41 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
     }
   };
 
+  const notes = useSelector((
+    state: storeTypes,
+  ): NoteI[] => state.notesReducer.notes);
+
+  const dispatch = useDispatch();
+
+  const searchParams = new URLSearchParams(routeComponentProps.location.search);
+
+  const folderSearchParam = searchParams.get('folder');
+
+  const noteSearchParam = searchParams.get('note');
+
+  const foundNote = notes.find((note): boolean => note.name === noteSearchParam);
+
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  const handleChangeEditorState = (internalEditorState: EditorState): void => {
+    setEditorState(internalEditorState);
+    if (foundNote && internalEditorState.getCurrentContent() !== editorState.getCurrentContent()) {
+      dispatch(saveContentState(
+        foundNote.id,
+        JSON.stringify(convertToRaw(
+          internalEditorState.getCurrentContent(),
+        )),
+      ));
+    }
+  };
+
+  useEffect((): void => {
+    const currentEditorState = foundNote
+      ? EditorState.createWithContent(convertFromRaw(JSON.parse(foundNote.contentState)))
+      : EditorState.createEmpty();
+
+    setEditorState(currentEditorState);
+  }, [folderSearchParam, noteSearchParam]);
 
   const handleKeyCommand = (
     command: string,
@@ -112,7 +144,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
   };
 
   const handleSubmit = (): void => {
-    alert(editorState.getCurrentContent());
+    console.log(JSON.stringify(convertToRaw(editorState.getCurrentContent())));
   };
 
   return (
@@ -154,23 +186,23 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
             <Link color="inherit" component={RouterLink} to="/note">
               所有記事
             </Link>
-            {folder && (
+            {folderSearchParam && (
               <>
-                {note ? (
-                  <Link color="inherit" component={RouterLink} to={`/note?folder=${folder}`}>
-                    {folder}
+                {noteSearchParam ? (
+                  <Link color="inherit" component={RouterLink} to={`/note?folder=${folderSearchParam}`}>
+                    {folderSearchParam}
                   </Link>
                 ) : (
-                  <Typography>{folder}</Typography>
+                  <Typography>{folderSearchParam}</Typography>
                 )}
               </>
             )}
-            {note && (
-              <Typography>{note}</Typography>
+            {noteSearchParam && (
+              <Typography>{noteSearchParam}</Typography>
             )}
           </Breadcrumbs>
 
-          {folder && !note && (
+          {folderSearchParam && !noteSearchParam && (
             <Grid container spacing={3} className={classes.gridContainer}>
               <Grid item xs={6}>
                 <Paper>
@@ -193,7 +225,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
             </Grid>
           )}
 
-          {note && (
+          {noteSearchParam && (
             <>
               <Typography>
                 Note
@@ -205,7 +237,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
               <Editor
                 editorState={editorState}
                 handleKeyCommand={handleKeyCommand}
-                onChange={setEditorState}
+                onChange={handleChangeEditorState}
                 placeholder="請在此輸入文章內容"
               />
 
