@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { groupBy } from 'lodash';
 import classNames from 'classnames';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -14,6 +16,8 @@ import PersonIcon from '@material-ui/icons/Person';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import { RouteComponentPropsI, RouteWithSubRoutes } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
+import { storeTypes } from '../../reducers/configureStore';
+import { NoteI } from '../../reducers/notes/notes';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const separateDarkImg = require('../../assets/images/separate_dark.png');
@@ -78,6 +82,12 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
 
   const { routes } = props;
 
+  const notes = useSelector((
+    state: storeTypes,
+  ): NoteI[] => state.notesReducer.notes);
+
+  const groupedFolderNotes = groupBy(notes, (note): string => note.folderName);
+
   const [noteOpen, setNoteOpen] = useState(true);
 
   const [folderOpen, setFolderOpen] = useState(true);
@@ -112,50 +122,43 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
             </ListItem>
             <Collapse in={noteOpen} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem
-                  button
-                  className={classes.listItem}
-                  component={Link}
-                  to="/note?folder=The F2E"
-                >
-                  The F2E
-                  <IconButton
-                    color="inherit"
-                    size="small"
-                    onClick={(e): void => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setFolderOpen(!folderOpen);
-                    }}
-                  >
-                    {folderOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                  </IconButton>
-                </ListItem>
-                <Collapse in={folderOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
+                {Object.keys(groupedFolderNotes).map((folderName): JSX.Element => (
+                  <React.Fragment key={folderName}>
                     <ListItem
                       button
+                      className={classes.listItem}
                       component={Link}
-                      to="/note?folder=The F2E&note=Note"
+                      to={`/note?folder=${folderName}`}
                     >
-                      Note
+                      {folderName}
+                      <IconButton
+                        color="inherit"
+                        size="small"
+                        onClick={(e): void => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          setFolderOpen(!folderOpen);
+                        }}
+                      >
+                        {folderOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                      </IconButton>
                     </ListItem>
-                    <ListItem
-                      button
-                      component={Link}
-                      to="/note?folder=The F2E&note=Cloud drive"
-                    >
-                      Cloud drive
-                    </ListItem>
-                    <ListItem
-                      button
-                      component={Link}
-                      to="/note?folder=The F2E&note=Chatting room"
-                    >
-                      Chatting room
-                    </ListItem>
-                  </List>
-                </Collapse>
+                    <Collapse in={folderOpen} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {groupedFolderNotes[folderName].map((note): JSX.Element => (
+                          <ListItem
+                            key={note.id}
+                            button
+                            component={Link}
+                            to={`/note?folder=${folderName}&note=${note.name}`}
+                          >
+                            {note.name}
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Collapse>
+                  </React.Fragment>
+                ))}
               </List>
             </Collapse>
 

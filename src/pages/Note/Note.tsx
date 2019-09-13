@@ -21,6 +21,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import WbSunnyOutlinedIcon from '@material-ui/icons/WbSunnyOutlined';
 import ListIcon from '@material-ui/icons/List';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import StarIcon from '@material-ui/icons/Star';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { RouteComponentPropsI } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
@@ -228,10 +229,16 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
           {noteSearchParam && (
             <>
               <Typography>
-                Note
-                <IconButton color="inherit">
-                  <StarBorderIcon />
-                </IconButton>
+                {foundNote && (
+                  <>
+                    {foundNote.name}
+                    <IconButton color="inherit">
+                      {foundNote.isStar
+                        ? <StarIcon />
+                        : <StarBorderIcon />}
+                    </IconButton>
+                  </>
+                )}
               </Typography>
 
               <Editor
