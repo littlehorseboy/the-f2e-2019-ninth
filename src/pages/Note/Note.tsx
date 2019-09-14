@@ -28,6 +28,7 @@ import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import FormatItalicIcon from '@material-ui/icons/FormatItalic';
 import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined';
 import LinkIcon from '@material-ui/icons/Link';
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import PhotoSizeSelectActualOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActualOutlined';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import { RouteComponentPropsI } from '../../router/Router';
@@ -96,8 +97,25 @@ const useStyles = makeStyles((theme) => createStyles({
     },
   },
   editorTools: {
+    paddingRight: theme.spacing(5),
     display: 'flex',
     alignItems: 'center',
+  },
+  textField: {
+    paddingLeft: theme.spacing(),
+    paddingRight: theme.spacing(),
+    '& .MuiSelect-root': {
+      color: '#FFFFFF',
+      '& option': {
+        color: 'rgba(0, 0, 0, 0.87)',
+      },
+    },
+    '& svg': {
+      color: '#FFFFFF',
+    },
+    '& .MuiInput-underline:before': {
+      border: 'none',
+    },
   },
   main: {
     paddingLeft: theme.spacing(7),
@@ -130,6 +148,9 @@ const useStyles = makeStyles((theme) => createStyles({
   draftEditorContainer: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
+    '& ul': {
+      paddingLeft: 20,
+    },
   },
 }));
 
@@ -179,6 +200,10 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
     }
   };
 
+  const handleChangeEditorStateDefault = (internalEditorState: EditorState): void => {
+    setEditorState(internalEditorState);
+  };
+
   useEffect((): void => {
     const currentEditorState = foundNote
       ? EditorState.createWithContent(convertFromRaw(JSON.parse(foundNote.contentState)))
@@ -203,6 +228,46 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
     handleChangeEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
   };
 
+  const handleToggleBlockTypeClick = (inlineStyle: string): void => {
+    handleChangeEditorState(RichUtils.toggleBlockType(editorState, inlineStyle));
+  };
+
+  const handleToggleFontFamilyInlineStyleClick = (inlineStyle: string): void => {
+    Object.keys(fontFamilyStyleMap).forEach((key): void => {
+      if (editorState.getCurrentInlineStyle().has(key)) {
+        handleChangeEditorStateDefault(RichUtils.toggleInlineStyle(editorState, key));
+      }
+    });
+    if (!editorState.getCurrentInlineStyle().has(inlineStyle)) {
+      handleChangeEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
+    }
+  };
+
+  const handleToggleFontSizeInlineStyleClick = (inlineStyle: string): void => {
+    Object.keys(fontSizeStyleMap).forEach((key): void => {
+      if (editorState.getCurrentInlineStyle().has(key)) {
+        handleChangeEditorStateDefault(RichUtils.toggleInlineStyle(editorState, key));
+      }
+    });
+    if (!editorState.getCurrentInlineStyle().has(inlineStyle)) {
+      handleChangeEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
+    }
+  };
+
+  const [fontFamilySelected, setFontFamilySelected] = useState('');
+
+  const handleChangeFontFamilySelected = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setFontFamilySelected(event.target.value);
+    handleToggleFontFamilyInlineStyleClick(event.target.value);
+  };
+
+  const [fontSizeSelected, setFontSizeSelected] = useState('');
+
+  const handleChangeFontSizeSelected = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setFontSizeSelected(event.target.value);
+    handleToggleFontSizeInlineStyleClick(event.target.value);
+  };
+
   const handleSubmit = (): void => {
     console.log(JSON.stringify(convertToRaw(editorState.getCurrentContent())));
   };
@@ -222,13 +287,14 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
           <div className={classes.editorTools}>
             <TextField
               select
-              // className={classes.textField}
-              // value={values.currency}
-              // onChange={handleChange('currency')}
+              className={classes.textField}
+              value={fontFamilySelected}
+              onChange={handleChangeFontFamilySelected}
               SelectProps={{
                 native: true,
               }}
             >
+              <option value="">font-family</option>
               {Object.keys(fontFamilyStyleMap).map((key): JSX.Element => (
                 <option key={key} value={key}>
                   {key}
@@ -237,13 +303,14 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
             </TextField>
             <TextField
               select
-              // className={classes.textField}
-              // value={values.currency}
-              // onChange={handleChange('currency')}
+              className={classes.textField}
+              value={fontSizeSelected}
+              onChange={handleChangeFontSizeSelected}
               SelectProps={{
                 native: true,
               }}
             >
+              <option value="">font-size</option>
               {Object.keys(fontSizeStyleMap).map((key): JSX.Element => (
                 <option key={key} value={key}>
                   {key}
@@ -262,7 +329,10 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
             <IconButton color="inherit" onClick={(): void => handleToggleInlineStyleClick('BOLD')}>
               <LinkIcon />
             </IconButton>
-            <Button color="inherit" onClick={(): void => handleToggleInlineStyleClick('BOLD')}>
+            <IconButton color="inherit" onClick={(): void => handleToggleBlockTypeClick('unordered-list-item')}>
+              <FormatListBulletedIcon />
+            </IconButton>
+            <Button color="inherit" onClick={(): void => handleToggleBlockTypeClick('unordered-list-item')}>
               <PhotoSizeSelectActualOutlinedIcon />
               插入圖片
             </Button>
@@ -271,6 +341,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
               插入檔案
             </Button>
           </div>
+
           <IconButton color="inherit">
             <WbSunnyOutlinedIcon />
           </IconButton>
