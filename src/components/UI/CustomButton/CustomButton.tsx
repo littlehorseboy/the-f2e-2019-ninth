@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
@@ -39,21 +40,37 @@ const useStyles = makeStyles((theme) => createStyles({
 
 interface PropsI {
   children: React.ReactChild;
+  to?: string;
 }
 
 export default function ButtonBases(props: PropsI): JSX.Element {
   const classes = useStyles();
 
-  const { children } = props;
+  const { children, to } = props;
 
   return (
-    <ButtonBase
-      focusRipple
-      className={classes.buttonBase}
-    >
-      <Typography>{children}</Typography>
-      <span className={classes.leftRightBorder} />
-      <span className={classes.backdrop} />
-    </ButtonBase>
+    to
+      ? (
+        <ButtonBase
+          focusRipple
+          className={classes.buttonBase}
+          component={Link}
+          to={to}
+        >
+          <Typography>{children}</Typography>
+          <span className={classes.leftRightBorder} />
+          <span className={classes.backdrop} />
+        </ButtonBase>
+      )
+      : (
+        <ButtonBase
+          focusRipple
+          className={classes.buttonBase}
+        >
+          <Typography>{children}</Typography>
+          <span className={classes.leftRightBorder} />
+          <span className={classes.backdrop} />
+        </ButtonBase>
+      )
   );
 }

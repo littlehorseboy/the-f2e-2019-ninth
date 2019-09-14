@@ -14,6 +14,7 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import TextField from '@material-ui/core/TextField';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -23,11 +24,42 @@ import ListIcon from '@material-ui/icons/List';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import StarIcon from '@material-ui/icons/Star';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
+import FormatBoldIcon from '@material-ui/icons/FormatBold';
+import FormatItalicIcon from '@material-ui/icons/FormatItalic';
+import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined';
+import LinkIcon from '@material-ui/icons/Link';
+import PhotoSizeSelectActualOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActualOutlined';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import { RouteComponentPropsI } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
 import { storeTypes } from '../../reducers/configureStore';
 import { NoteI } from '../../reducers/notes/notes';
 import { saveContentState } from '../../actions/notes/notes';
+
+const fontFamilyStyleMap = {
+  微軟正黑體: { fontFamily: 'Microsoft JhengHei' },
+  新細明體: { fontFamily: 'PMingLiU' },
+};
+
+const fontSizeStyleMap = {
+  8: { fontSize: 8 },
+  9: { fontSize: 9 },
+  10: { fontSize: 10 },
+  11: { fontSize: 11 },
+  12: { fontSize: 12 },
+  14: { fontSize: 14 },
+  16: { fontSize: 16 },
+  18: { fontSize: 18 },
+  24: { fontSize: 24 },
+  30: { fontSize: 30 },
+  36: { fontSize: 36 },
+  48: { fontSize: 48 },
+};
+
+const customStyleMap = {
+  ...fontFamilyStyleMap,
+  ...fontSizeStyleMap,
+};
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const useStyles = makeStyles((theme) => createStyles({
@@ -63,6 +95,10 @@ const useStyles = makeStyles((theme) => createStyles({
       },
     },
   },
+  editorTools: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   main: {
     paddingLeft: theme.spacing(7),
     paddingRight: theme.spacing(2),
@@ -74,6 +110,26 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   gridContainer: {
     paddingTop: theme.spacing(2),
+  },
+  notePaperContainer: {
+    backgroundColor: '#616F99',
+    color: '#FFFFFF',
+    padding: theme.spacing(2),
+  },
+  notePaperTitle: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  editorContainer: {
+    paddingTop: theme.spacing(2),
+  },
+  editorTitleContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  draftEditorContainer: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
 }));
 
@@ -103,6 +159,9 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
   const folderSearchParam = searchParams.get('folder');
 
   const noteSearchParam = searchParams.get('note');
+
+  const filteredFolderNotes = notes
+    .filter((note): boolean => note.folderName === folderSearchParam);
 
   const foundNote = notes.find((note): boolean => note.name === noteSearchParam);
 
@@ -140,16 +199,8 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
     return 'not-handled';
   };
 
-  const handleBoldClick = (): void => {
-    setEditorState(RichUtils.toggleInlineStyle(editorState, 'BOLD'));
-    if (foundNote && RichUtils.toggleInlineStyle(editorState, 'BOLD').getCurrentContent() !== editorState.getCurrentContent()) {
-      dispatch(saveContentState(
-        foundNote.id,
-        JSON.stringify(convertToRaw(
-          RichUtils.toggleInlineStyle(editorState, 'BOLD').getCurrentContent(),
-        )),
-      ));
-    }
+  const handleToggleInlineStyleClick = (inlineStyle: string): void => {
+    handleChangeEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
   };
 
   const handleSubmit = (): void => {
@@ -168,7 +219,58 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
           </IconButton>
         </div>
         <div className={classes.headerToolbarContainer}>
-          <Button color="secondary" onClick={handleBoldClick}>Bold</Button>
+          <div className={classes.editorTools}>
+            <TextField
+              select
+              // className={classes.textField}
+              // value={values.currency}
+              // onChange={handleChange('currency')}
+              SelectProps={{
+                native: true,
+              }}
+            >
+              {Object.keys(fontFamilyStyleMap).map((key): JSX.Element => (
+                <option key={key} value={key}>
+                  {key}
+                </option>
+              ))}
+            </TextField>
+            <TextField
+              select
+              // className={classes.textField}
+              // value={values.currency}
+              // onChange={handleChange('currency')}
+              SelectProps={{
+                native: true,
+              }}
+            >
+              {Object.keys(fontSizeStyleMap).map((key): JSX.Element => (
+                <option key={key} value={key}>
+                  {key}
+                </option>
+              ))}
+            </TextField>
+            <IconButton color="inherit" onClick={(): void => handleToggleInlineStyleClick('BOLD')}>
+              <FormatBoldIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={(): void => handleToggleInlineStyleClick('ITALIC')}>
+              <FormatItalicIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={(): void => handleToggleInlineStyleClick('UNDERLINE')}>
+              <FormatUnderlinedIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={(): void => handleToggleInlineStyleClick('BOLD')}>
+              <LinkIcon />
+            </IconButton>
+            <Button color="inherit" onClick={(): void => handleToggleInlineStyleClick('BOLD')}>
+              <PhotoSizeSelectActualOutlinedIcon />
+              插入圖片
+            </Button>
+            <Button color="inherit" onClick={(): void => handleToggleInlineStyleClick('BOLD')}>
+              <DescriptionOutlinedIcon />
+              插入檔案
+            </Button>
+          </div>
           <IconButton color="inherit">
             <WbSunnyOutlinedIcon />
           </IconButton>
@@ -213,51 +315,68 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
 
           {folderSearchParam && !noteSearchParam && (
             <Grid container spacing={3} className={classes.gridContainer}>
-              <Grid item xs={6}>
-                <Paper>
-                  <Typography>123</Typography>
-                  <CustomButton>more</CustomButton>
-                </Paper>
-              </Grid>
-              <Grid item xs={6}>
-                <Paper>
-                  <Typography>123</Typography>
-                  <CustomButton>more</CustomButton>
-                </Paper>
-              </Grid>
-              <Grid item xs={6}>
-                <Paper>
-                  <Typography>123</Typography>
-                  <CustomButton>more</CustomButton>
-                </Paper>
-              </Grid>
+              {filteredFolderNotes.map((note): JSX.Element => (
+                <Grid key={note.id} item xs={6}>
+                  <Paper className={classes.notePaperContainer}>
+                    <div className={classes.notePaperTitle}>
+                      <Typography variant="h4">
+                        {note.name}
+                      </Typography>
+                      <IconButton color="inherit">
+                        {note.isStar
+                          ? <StarIcon />
+                          : <StarBorderIcon />}
+                      </IconButton>
+                    </div>
+
+                    <div className={classes.draftEditorContainer}>
+                      <Editor
+                        editorState={EditorState.createWithContent(
+                          convertFromRaw(JSON.parse(note.contentState)),
+                        )}
+                        readOnly
+                        onChange={(): void => {}}
+                      />
+                    </div>
+
+                    <CustomButton
+                      to={`/note?folder=${note.folderName}&note=${note.name}`}
+                    >
+                      more
+                    </CustomButton>
+                  </Paper>
+                </Grid>
+              ))}
             </Grid>
           )}
 
           {noteSearchParam && (
-            <>
-              <Typography>
-                {foundNote && (
-                  <>
+            <div className={classes.editorContainer}>
+              {foundNote && (
+                <div className={classes.editorTitleContainer}>
+                  <Typography variant="h4">
                     {foundNote.name}
-                    <IconButton color="inherit">
-                      {foundNote.isStar
-                        ? <StarIcon />
-                        : <StarBorderIcon />}
-                    </IconButton>
-                  </>
-                )}
-              </Typography>
+                  </Typography>
+                  <IconButton color="inherit">
+                    {foundNote.isStar
+                      ? <StarIcon />
+                      : <StarBorderIcon />}
+                  </IconButton>
+                </div>
+              )}
 
-              <Editor
-                editorState={editorState}
-                handleKeyCommand={handleKeyCommand}
-                onChange={handleChangeEditorState}
-                placeholder="請在此輸入文章內容"
-              />
+              <div className={classes.draftEditorContainer}>
+                <Editor
+                  editorState={editorState}
+                  customStyleMap={customStyleMap}
+                  handleKeyCommand={handleKeyCommand}
+                  onChange={handleChangeEditorState}
+                  placeholder="請在此輸入文章內容"
+                />
+              </div>
 
               <Button onClick={handleSubmit}>get</Button>
-            </>
+            </div>
           )}
         </Container>
       </div>
