@@ -142,6 +142,14 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
 
   const handleBoldClick = (): void => {
     setEditorState(RichUtils.toggleInlineStyle(editorState, 'BOLD'));
+    if (foundNote && RichUtils.toggleInlineStyle(editorState, 'BOLD').getCurrentContent() !== editorState.getCurrentContent()) {
+      dispatch(saveContentState(
+        foundNote.id,
+        JSON.stringify(convertToRaw(
+          RichUtils.toggleInlineStyle(editorState, 'BOLD').getCurrentContent(),
+        )),
+      ));
+    }
   };
 
   const handleSubmit = (): void => {

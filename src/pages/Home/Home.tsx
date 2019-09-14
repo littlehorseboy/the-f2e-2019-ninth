@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash/groupBy';
 import classNames from 'classnames';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
