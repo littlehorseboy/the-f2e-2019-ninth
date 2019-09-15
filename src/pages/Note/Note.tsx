@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Editor, EditorState, RichUtils, DraftHandleValue, convertToRaw, convertFromRaw,
+  ContentBlock, ContentState, CompositeDecorator,
 } from 'draft-js';
-import classNames from 'classnames';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Container from '@material-ui/core/Container';
@@ -27,7 +27,6 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import FormatItalicIcon from '@material-ui/icons/FormatItalic';
 import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined';
-import LinkIcon from '@material-ui/icons/Link';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import PhotoSizeSelectActualOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActualOutlined';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
@@ -36,6 +35,8 @@ import CustomButton from '../../components/UI/CustomButton/CustomButton';
 import { storeTypes } from '../../reducers/configureStore';
 import { NoteI } from '../../reducers/notes/notes';
 import { saveContentState } from '../../actions/notes/notes';
+import EditorLinkButton from './EditorLinkButton/EditorLinkButton';
+import EditorLinkOffButton from './EditorLinkOffButton/EditorLinkOffButton';
 
 const fontFamilyStyleMap = {
   微軟正黑體: { fontFamily: 'Microsoft JhengHei' },
@@ -61,6 +62,44 @@ const customStyleMap = {
   ...fontFamilyStyleMap,
   ...fontSizeStyleMap,
 };
+
+const findLinkEntities = (
+  contentBlock: ContentBlock,
+  callback: (start: number, end: number) => void,
+  contentState: ContentState,
+): void => {
+  contentBlock.findEntityRanges(
+    (character): boolean => {
+      const entityKey = character.getEntity();
+      return entityKey !== null
+        && contentState.getEntity(entityKey).getType() === 'LINK';
+    },
+    callback,
+  );
+};
+
+interface EditorLinkPropsI {
+  contentState: ContentState;
+  entityKey: string;
+  children: React.ReactChild;
+}
+
+const EditorLink = (props: EditorLinkPropsI): JSX.Element => {
+  const { contentState, entityKey, children } = props;
+  const { url } = contentState.getEntity(entityKey).getData();
+  return (
+    <a href={url} style={{ color: 'rgb(146, 165, 205)' }}>
+      {children}
+    </a>
+  );
+};
+
+const decorator = new CompositeDecorator([
+  {
+    strategy: findLinkEntities,
+    component: EditorLink,
+  },
+]);
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const useStyles = makeStyles((theme) => createStyles({
@@ -151,6 +190,11 @@ const useStyles = makeStyles((theme) => createStyles({
     '& ul': {
       paddingLeft: 20,
     },
+    '& .public-DraftEditorPlaceholder-root': {
+      color: 'rgb(145, 151, 163)',
+      position: 'absolute',
+      zIndex: 1,
+    },
   },
 }));
 
@@ -186,7 +230,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
 
   const foundNote = notes.find((note): boolean => note.name === noteSearchParam);
 
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(EditorState.createEmpty(decorator));
 
   const handleChangeEditorState = (internalEditorState: EditorState): void => {
     setEditorState(internalEditorState);
@@ -206,8 +250,8 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
 
   useEffect((): void => {
     const currentEditorState = foundNote
-      ? EditorState.createWithContent(convertFromRaw(JSON.parse(foundNote.contentState)))
-      : EditorState.createEmpty();
+      ? EditorState.createWithContent(convertFromRaw(JSON.parse(foundNote.contentState)), decorator)
+      : EditorState.createEmpty(decorator);
 
     setEditorState(currentEditorState);
   }, [folderSearchParam, noteSearchParam]);
@@ -326,9 +370,17 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
             <IconButton color="inherit" onClick={(): void => handleToggleInlineStyleClick('UNDERLINE')}>
               <FormatUnderlinedIcon />
             </IconButton>
-            <IconButton color="inherit" onClick={(): void => handleToggleInlineStyleClick('BOLD')}>
-              <LinkIcon />
-            </IconButton>
+
+            <EditorLinkButton
+              editorState={editorState}
+              handleChangeEditorState={handleChangeEditorState}
+            />
+
+            <EditorLinkOffButton
+              editorState={editorState}
+              handleChangeEditorState={handleChangeEditorState}
+            />
+
             <IconButton color="inherit" onClick={(): void => handleToggleBlockTypeClick('unordered-list-item')}>
               <FormatListBulletedIcon />
             </IconButton>
