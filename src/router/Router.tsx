@@ -4,6 +4,9 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import IsLoading from '../components/IsLoading/IsLoading';
 import Home from '../pages/Home/Home';
 import Note from '../pages/Note/Note';
+import Star from '../pages/Star/Star';
+import Share from '../pages/Share/Share';
+import TrashCan from '../pages/TrashCan/TrashCan';
 
 interface RouteWithSubRoutesPropsI {
   route: RouteI;
@@ -51,19 +54,19 @@ export const routes: RouteI[] = [
       {
         path: '/star',
         name: 'star',
-        Component: Home,
+        Component: Star,
         breadcrumbName: '已加星號',
       },
       {
         path: '/share',
         name: 'share',
-        Component: Home,
+        Component: Share,
         breadcrumbName: '與我共享',
       },
       {
         path: '/trashCan',
         name: 'trashCan',
-        Component: Home,
+        Component: TrashCan,
         breadcrumbName: '垃圾桶',
       },
     ],

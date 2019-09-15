@@ -249,7 +249,7 @@ const useStyles = makeStyles((theme) => createStyles({
   },
 }));
 
-export default function Note(props: RouteComponentPropsI): JSX.Element {
+export default function Star(props: RouteComponentPropsI): JSX.Element {
   const classes = useStyles();
 
   const { routeComponentProps } = props;
@@ -279,7 +279,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
   const filteredFolderNotes = notes
     .filter((note): boolean => note.folderName === folderSearchParam);
 
-  const foundNote = filteredFolderNotes.find((note): boolean => note.name === noteSearchParam);
+  const foundNote = notes.find((note): boolean => note.name === noteSearchParam);
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty(decorator));
 
@@ -492,7 +492,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
         <Container maxWidth={false}>
           <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
             <Link color="inherit" component={RouterLink} to="/note">
-              所有記事
+              已加星號
             </Link>
             {folderSearchParam && (
               <>
