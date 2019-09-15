@@ -41,32 +41,6 @@ const styles = {
   },
 };
 
-const Audio = (props: { src: string }): JSX.Element => {
-  const { src } = props;
-
-  return (
-    <audio controls src={src} style={styles.media}>
-      <track kind="captions" srcLang="en" label="english_captions" />
-    </audio>
-  );
-};
-
-const Image = (props: { src: string }): JSX.Element => {
-  const { src } = props;
-
-  return <img src={src} alt="editorImg" style={styles.media} />;
-};
-
-const Video = (props: { src: string }): JSX.Element => {
-  const { src } = props;
-
-  return (
-    <video controls src={src} style={styles.media}>
-      <track kind="captions" srcLang="en" label="english_captions" />
-    </video>
-  );
-};
-
 const Media = (
   props: { contentState: ContentState; block: ContentBlock },
 ): JSX.Element | undefined => {
@@ -80,18 +54,28 @@ const Media = (
 
   let media;
   if (type === 'audio') {
-    media = <Audio src={src} />;
+    media = (
+      <audio controls src={src} style={styles.media}>
+        <track kind="captions" srcLang="en" label="english_captions" />
+      </audio>
+    );
   } else if (type === 'image') {
-    media = <Image src={src} />;
+    media = <img src={src} alt="editorImg" style={styles.media} />;
   } else if (type === 'video') {
-    media = <Video src={src} />;
+    media = (
+      <video controls src={src} style={styles.media}>
+        <track kind="captions" srcLang="en" label="english_captions" />
+      </video>
+    );
   }
 
   return media;
 };
 
 const mediaBlockRenderer = (block: ContentBlock): {
-  component: (props: any) => JSX.Element | undefined;
+  component: (props: {
+    contentState: ContentState; block: ContentBlock;
+  }) => JSX.Element | undefined;
   editable: boolean;
 } | null => {
   if (block.getType() === 'atomic') {
@@ -123,6 +107,12 @@ export default function MediaEditorExample(): JSX.Element {
   const [urlType, setUrlType] = useState('');
 
   const editor = useRef<Editor | null>(null);
+
+  const fileInput = useRef<HTMLInputElement | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    console.log(event.target.files);
+  };
 
   const focus = (): void => {
     if (editor.current) {
@@ -217,6 +207,7 @@ export default function MediaEditorExample(): JSX.Element {
         <button type="button" onClick={addVideo} style={{ marginRight: 10 }}>
           Add Video
         </button>
+        <input ref={fileInput} type="file" onChange={handleFileChange} />
       </div>
 
       {showURLInput && (
