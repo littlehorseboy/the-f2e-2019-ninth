@@ -37,6 +37,7 @@ import { NoteI } from '../../reducers/notes/notes';
 import { saveContentState } from '../../actions/notes/notes';
 import EditorLinkButton from './EditorLinkButton/EditorLinkButton';
 import EditorLinkOffButton from './EditorLinkOffButton/EditorLinkOffButton';
+import RefDraftAddImageButton from './AddImageButton/RefDraftAddImageButton';
 
 const fontFamilyStyleMap = {
   微軟正黑體: { fontFamily: 'Microsoft JhengHei' },
@@ -499,6 +500,8 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
               </div>
 
               <Button onClick={handleSubmit}>get</Button>
+
+              <RefDraftAddImageButton />
             </div>
           )}
         </Container>
