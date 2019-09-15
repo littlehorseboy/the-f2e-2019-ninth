@@ -96,7 +96,7 @@ export default function Home(props: RouteComponentPropsI): JSX.Element {
     <div className={classes.root}>
       <div className={classes.sidebar}>
         <Grid container justify="center" className={classes.newNoteButtonContainer}>
-          <CustomButton>新增筆記</CustomButton>
+          <CustomButton onClick={(): void => alert('尚未實裝此功能')}>新增筆記</CustomButton>
         </Grid>
 
         <div className={classes.listContainer}>

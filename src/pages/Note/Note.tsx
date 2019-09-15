@@ -34,7 +34,7 @@ import { RouteComponentPropsI } from '../../router/Router';
 import CustomButton from '../../components/UI/CustomButton/CustomButton';
 import { storeTypes } from '../../reducers/configureStore';
 import { NoteI } from '../../reducers/notes/notes';
-import { saveContentState } from '../../actions/notes/notes';
+import { saveContentState, changeNoteStar } from '../../actions/notes/notes';
 import EditorLinkButton from '../../components/Note/EditorLinkButton/EditorLinkButton';
 import EditorLinkOffButton from '../../components/Note/EditorLinkOffButton/EditorLinkOffButton';
 
@@ -386,6 +386,10 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
     );
   };
 
+  const handleChangeNoteStar = (id: number): void => {
+    dispatch(changeNoteStar(id));
+  };
+
   const handleSubmit = (): void => {
     console.log(JSON.stringify(convertToRaw(editorState.getCurrentContent())));
   };
@@ -394,10 +398,10 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
     <div className={classes.rightContainer}>
       <div>
         <div className={classes.headerArrowContainer}>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={(): void => alert('尚未實裝此功能')}>
             <ArrowBackIcon />
           </IconButton>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={(): void => alert('尚未實裝此功能')}>
             <ArrowForwardIcon />
           </IconButton>
         </div>
@@ -412,7 +416,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
                 native: true,
               }}
             >
-              <option value="">font-family</option>
+              <option value="">預設字型</option>
               {Object.keys(fontFamilyStyleMap).map((key): JSX.Element => (
                 <option key={key} value={key}>
                   {key}
@@ -428,7 +432,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
                 native: true,
               }}
             >
-              <option value="">font-size</option>
+              <option value="">預設大小</option>
               {Object.keys(fontSizeStyleMap).map((key): JSX.Element => (
                 <option key={key} value={key}>
                   {key}
@@ -468,7 +472,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
             </Button>
           </div>
 
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={(): void => alert('尚未實裝此功能')}>
             <WbSunnyOutlinedIcon />
           </IconButton>
           <ToggleButtonGroup
@@ -554,7 +558,7 @@ export default function Note(props: RouteComponentPropsI): JSX.Element {
                   <Typography variant="h4">
                     {foundNote.name}
                   </Typography>
-                  <IconButton color="inherit">
+                  <IconButton color="inherit" onClick={(): void => handleChangeNoteStar(foundNote.id)}>
                     {foundNote.isStar
                       ? <StarIcon />
                       : <StarBorderIcon />}

@@ -1,4 +1,4 @@
-import { notesActionTypes, SAVECONTENTSTATE } from '../../actions/notes/notes';
+import { notesActionTypes, SAVECONTENTSTATE, CHANGENOTESTAR } from '../../actions/notes/notes';
 
 export interface NoteI {
   id: number;
@@ -47,6 +47,18 @@ const reducer = (state = initState, action: notesActionTypes): NotesI => {
             return {
               ...note,
               contentState: action.payload.contentState,
+            };
+          }
+          return note;
+        }),
+      };
+    case CHANGENOTESTAR:
+      return {
+        notes: state.notes.map((note): NoteI => {
+          if (note.id === action.payload.id) {
+            return {
+              ...note,
+              isStar: !note.isStar,
             };
           }
           return note;

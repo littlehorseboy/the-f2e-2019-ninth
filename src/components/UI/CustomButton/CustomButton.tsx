@@ -41,12 +41,13 @@ const useStyles = makeStyles((theme) => createStyles({
 interface PropsI {
   children: React.ReactChild;
   to?: string;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 export default function ButtonBases(props: PropsI): JSX.Element {
   const classes = useStyles();
 
-  const { children, to } = props;
+  const { children, to, onClick } = props;
 
   return (
     to
@@ -66,6 +67,7 @@ export default function ButtonBases(props: PropsI): JSX.Element {
         <ButtonBase
           focusRipple
           className={classes.buttonBase}
+          onClick={onClick}
         >
           <Typography>{children}</Typography>
           <span className={classes.leftRightBorder} />

@@ -492,7 +492,7 @@ export default function TrashCan(props: RouteComponentPropsI): JSX.Element {
         <Container maxWidth={false}>
           <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
             <Link color="inherit" component={RouterLink} to="/note">
-              垃圾桶
+              垃圾桶 (無內容)
             </Link>
             {folderSearchParam && (
               <>

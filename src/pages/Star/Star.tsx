@@ -492,7 +492,7 @@ export default function Star(props: RouteComponentPropsI): JSX.Element {
         <Container maxWidth={false}>
           <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
             <Link color="inherit" component={RouterLink} to="/note">
-              已加星號
+              已加星號 (無內容)
             </Link>
             {folderSearchParam && (
               <>

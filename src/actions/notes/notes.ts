@@ -1,4 +1,5 @@
 export const SAVECONTENTSTATE = 'SAVECONTENTSTATE';
+export const CHANGENOTESTAR = 'CHANGENOTESTAR';
 
 export interface SaveContentStateI {
   type: typeof SAVECONTENTSTATE;
@@ -16,4 +17,18 @@ export const saveContentState = (id: number, contentState: string): SaveContentS
   },
 });
 
-export type notesActionTypes = SaveContentStateI;
+export interface ChangeNoteStarI {
+  type: typeof CHANGENOTESTAR;
+  payload: {
+    id: number;
+  };
+}
+
+export const changeNoteStar = (id: number): ChangeNoteStarI => ({
+  type: CHANGENOTESTAR,
+  payload: {
+    id,
+  },
+});
+
+export type notesActionTypes = SaveContentStateI | ChangeNoteStarI;

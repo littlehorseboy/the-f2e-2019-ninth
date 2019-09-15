@@ -492,7 +492,7 @@ export default function Share(props: RouteComponentPropsI): JSX.Element {
         <Container maxWidth={false}>
           <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
             <Link color="inherit" component={RouterLink} to="/note">
-              與我共享
+              與我共享 (無內容)
             </Link>
             {folderSearchParam && (
               <>
