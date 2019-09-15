@@ -189,6 +189,7 @@ const useStyles = makeStyles((theme) => createStyles({
   editorTools: {
     paddingRight: theme.spacing(5),
     display: 'flex',
+    flexWrap: 'wrap',
     alignItems: 'center',
   },
   textField: {
